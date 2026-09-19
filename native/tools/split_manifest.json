@@ -1,0 +1,206 @@
+{
+  "source": "XiangqiApp.swift",
+  "headerLines": 7,
+  "files": [
+    {
+      "path": "Core/Constants.swift",
+      "desc": "全局常量 / Difficulty / 坐标工具 / JS 取值转换",
+      "ranges": [
+        [
+          8,
+          58
+        ]
+      ]
+    },
+    {
+      "path": "Core/Engine/EngineBridge.swift",
+      "desc": "内置 JS 引擎桥 (JavaScriptCore)",
+      "ranges": [
+        [
+          58,
+          109
+        ]
+      ]
+    },
+    {
+      "path": "Core/Engine/BackgroundEngine.swift",
+      "desc": "后台线程引擎包装",
+      "ranges": [
+        [
+          109,
+          142
+        ]
+      ]
+    },
+    {
+      "path": "Core/Engine/PikafishEngine.swift",
+      "desc": "Pikafish UCI 进程引擎",
+      "ranges": [
+        [
+          142,
+          224
+        ]
+      ]
+    },
+    {
+      "path": "UI/EvalBarView.swift",
+      "desc": "形势评估条",
+      "ranges": [
+        [
+          224,
+          245
+        ]
+      ]
+    },
+    {
+      "path": "UI/CoachPanel.swift",
+      "desc": "教学侧栏",
+      "ranges": [
+        [
+          245,
+          288
+        ]
+      ]
+    },
+    {
+      "path": "UI/BoardView.swift",
+      "desc": "棋盘视图 (待 P1b 再按职责细分)",
+      "ranges": [
+        [
+          288,
+          1138
+        ]
+      ]
+    },
+    {
+      "path": "FX/Trajectory.swift",
+      "desc": "轨迹引擎: Ease + Trajectory",
+      "ranges": [
+        [
+          1138,
+          1219
+        ]
+      ]
+    },
+    {
+      "path": "Core/Rng.swift",
+      "desc": "确定性随机数发生器",
+      "ranges": [
+        [
+          1219,
+          1230
+        ]
+      ]
+    },
+    {
+      "path": "FX/CrackForge.swift",
+      "desc": "裂痕: Crack + CrackForge",
+      "ranges": [
+        [
+          1230,
+          1282
+        ]
+      ]
+    },
+    {
+      "path": "FX/WeatherLayer.swift",
+      "desc": "天气: RainDrop / Splash / Weather",
+      "ranges": [
+        [
+          1282,
+          1463
+        ]
+      ]
+    },
+    {
+      "path": "FX/ActorLayer.swift",
+      "desc": "屏幕演员: SpriteSheet / ActorAssets / HorseArt / Actor",
+      "ranges": [
+        [
+          1463,
+          1599
+        ]
+      ]
+    },
+    {
+      "path": "UI/Sim/SimMove.swift",
+      "desc": "模拟模式: 走子记录",
+      "ranges": [
+        [
+          1599,
+          1612
+        ]
+      ]
+    },
+    {
+      "path": "UI/Sim/SimPanel.swift",
+      "desc": "模拟模式: 控制面板",
+      "ranges": [
+        [
+          1612,
+          1720
+        ]
+      ]
+    },
+    {
+      "path": "UI/Sim/SimOverlayView.swift",
+      "desc": "模拟模式: 暗黑遮罩",
+      "ranges": [
+        [
+          1720,
+          1747
+        ]
+      ]
+    },
+    {
+      "path": "App/AppDelegate.swift",
+      "desc": "应用委托 (待 P1b 再按职责细分)",
+      "ranges": [
+        [
+          1747,
+          2442
+        ]
+      ]
+    },
+    {
+      "path": "Audio/SoundEngine.swift",
+      "desc": "音效引擎",
+      "ranges": [
+        [
+          2442,
+          2534
+        ]
+      ]
+    },
+    {
+      "path": "UI/ToolbarIDs.swift",
+      "desc": "工具栏标识符",
+      "ranges": [
+        [
+          2534,
+          2546
+        ]
+      ]
+    },
+    {
+      "path": "App/main.swift",
+      "desc": "程序入口 (顶层语句只能在这一个文件里)",
+      "ranges": [
+        [
+          2546,
+          2556
+        ]
+      ]
+    },
+    {
+      "path": "UI/MenuBuilder.swift",
+      "desc": "主菜单构建",
+      "ranges": [
+        [
+          2556,
+          2611
+        ]
+      ]
+    }
+  ]
+}

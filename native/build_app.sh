@@ -68,7 +68,12 @@ if [ -f ../pikafish ]; then
 fi
 
 echo "== 编译 Swift 原生程序 (完全原生渲染) =="
-swiftc -O XiangqiApp.swift -o "$MACOS/$EXE" \
+# 源码已按职责拆分到 Core/ Render/ FX/ UI/ App/ Audio 各目录 (见 tools/split_xiangqi.py)。
+# 顶层语句只允许出现在 App/main.swift 里, 因此文件名不能改。
+SOURCES=$(find . -name '*.swift' -not -path './build/*' -not -path './tools/*' | LC_ALL=C sort)
+SRC_COUNT=$(printf '%s\n' "$SOURCES" | wc -l | tr -d ' ')
+echo "  源文件 $SRC_COUNT 个"
+swiftc -O $SOURCES -o "$MACOS/$EXE" \
   -framework AppKit -framework AVFoundation -framework JavaScriptCore
 
 echo "== 写入 Info.plist =="
