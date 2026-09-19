@@ -1,0 +1,9 @@
+{
+  "name": "tan-zimu-xiangqi",
+  "version": "1.0.0",
+  "private": true,
+  "description": "人机中国象棋对战：内置开源棋力引擎，电脑每步思考时间不超过 3 秒",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

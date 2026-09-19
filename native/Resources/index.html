@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>人机中国象棋 · 教学版</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <div id="left">
+      <canvas id="board"></canvas>
+      <div id="controls">
+        <button id="newGame" class="btn">新对局</button>
+        <button id="undo" class="btn">悔棋</button>
+        <button id="resign" class="btn">认输</button>
+        <button id="hint" class="btn btn-accent">提示</button>
+        <select id="side" class="sel" title="谁先走">
+          <option value="r">我执红（先走）</option>
+          <option value="b">我执黑（后走）</option>
+        </select>
+        <select id="difficulty" class="sel" title="难度">
+          <option value="easy">入门</option>
+          <option value="medium">进阶</option>
+          <option value="hard" selected>高手</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="right">
+      <div id="evalbar" title="局势评估">
+        <div id="evalRed"></div>
+        <div id="evalLabel">均势</div>
+        <div id="evalBlack"></div>
+      </div>
+
+      <div id="status">轮到 <b>红方</b>（你）走棋</div>
+      <div id="timeRow">
+        <span class="tlabel">红方用时</span><span id="redTime" class="tval">0.0s</span>
+        <span class="tlabel">黑方用时</span><span id="blackTime" class="tval">0.0s</span>
+      </div>
+
+      <div id="coachPanel">
+        <div class="coach-title">📘 教学助手</div>
+        <div id="hintBox" class="coach-box hidden">
+          <div class="coach-h">💡 提示</div>
+          <div id="hintText" class="coach-c"></div>
+        </div>
+        <div id="threatBox" class="coach-box">
+          <div class="coach-h">⚠️ 威胁</div>
+          <div id="threatText" class="coach-c">暂无威胁</div>
+        </div>
+        <div id="commentBox" class="coach-box">
+          <div class="coach-h">📝 着法讲解</div>
+          <div id="commentText" class="coach-c">—</div>
+        </div>
+        <div id="assessBox" class="coach-box hidden">
+          <div class="coach-h">🎯 走得怎么样</div>
+          <div id="assessText" class="coach-c"></div>
+        </div>
+      </div>
+
+      <div class="coach-title">📜 棋谱</div>
+      <ul id="moveList"></ul>
+    </div>
+  </div>
+
+  <div id="result" class="hidden">
+    <div class="result-card">
+      <div id="resultText">—</div>
+      <button id="resultNew" class="btn btn-accent">再来一局</button>
+    </div>
+  </div>
+
+  <script src="xiangqi.js"></script>
+  <script src="ai.js"></script>
+  <script src="coach.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

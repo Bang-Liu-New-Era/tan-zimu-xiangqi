@@ -1,0 +1,30 @@
+# ---- macOS ----
+.DS_Store
+**/.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# ---- 编辑器 / IDE ----
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+xcuserdata/
+*.xcuserstate
+
+# ---- 构建产物 ----
+build/
+.build/
+DerivedData/
+*.app
+__pycache__/
+*.pyc
+
+# ---- 依赖 ----
+node_modules/
+
+# ---- 临时文件 ----
+*.tmp
+*.log
