@@ -191,3 +191,45 @@ struct Weather {
 }
 
 // MARK: - 屏幕演员 (序列帧精灵: 马跑过画面)
+
+// MARK: - 天气图层
+
+/// 天气状态盒。用 class 包一层, 让"远景雨"与"近景雨"两个图层共享同一份雨滴状态
+/// (Weather 是 struct, 直接放在两个图层里会各下一场雨)。
+final class WeatherState {
+    var weather = Weather()
+}
+
+/// 天气图层。
+///   .back  —— 远景雨幕, 注册在棋盘**之前**: 制造"棋盘之外也在下雨"的纵深
+///   .front —— 近景雨幕 + 水花 + 闪电, 注册在棋子**之后**: 雨幕压在画面前方
+/// 只有 .back 负责推进状态, 否则雨滴会被两个图层各推进一次 → 双倍速。
+final class WeatherLayer: RenderLayer {
+    enum Pass { case back, front }
+
+    let name: String
+    let pass: Pass
+    var followsShake: Bool { false }        // 雨是"环境", 不该跟着棋盘抖
+    private let state: WeatherState
+
+    init(_ pass: Pass, _ state: WeatherState) {
+        self.pass = pass
+        self.state = state
+        self.name = pass == .back ? "rainBack" : "rainFront"
+    }
+
+    var isAnimating: Bool { state.weather.isActive }
+
+    func update(_ ctx: RenderContext) {
+        guard pass == .back else { return }
+        state.weather.update(ctx.dt, board: ctx.plateRect, view: ctx.bounds)
+    }
+
+    func draw(_ ctx: RenderContext) {
+        guard let cg = ctx.cg else { return }
+        switch pass {
+        case .back:  state.weather.drawBack(cg, ctx.bounds)
+        case .front: state.weather.drawFront(cg, ctx.bounds)
+        }
+    }
+}
