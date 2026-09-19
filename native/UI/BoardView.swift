@@ -197,6 +197,7 @@ class BoardView: NSView {
         ctx.shakeX = now < shakeUntil ? sin(now * 40) * 4 : 0
         ctx.flashUntil = flashUntil
         ctx.hintUntil = hintUntil
+        ctx.scale = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
         ctx.scene.board = board
         ctx.scene.lastMove = lastMove
         ctx.scene.legalTargets = legalTargets
@@ -217,9 +218,11 @@ class BoardView: NSView {
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
+        let t0 = PerfMonitor.enabled ? CACurrentMediaTime() : 0
         NSColor(calibratedRed: 0.88, green: 0.87, blue: 0.83, alpha: 1).setFill()
         NSBezierPath.fill(bounds)
         pipeline.draw(makeContext(now: CACurrentMediaTime()))
+        if PerfMonitor.enabled { PerfMonitor.record(CACurrentMediaTime() - t0) }
     }
 
     // MARK: - 交互

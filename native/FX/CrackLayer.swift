@@ -36,6 +36,10 @@ final class CrackLayer: RenderLayer {
     }
 
     /// 每道裂纹在诞生后的 dur 秒内"炸开生长", 之后只是静态重描 —— 裂纹点集只生成一次, 不再变化。
+    ///
+    /// 关于缓存: 曾试过把定型后的裂痕缓存成整屏位图 (省掉最多 60 道 × 约 24 条分支 × 3 层
+    /// = 上千次描边), 实测不划算 —— 整屏位图往返的内存搬运比直接重描还贵, 且回贴会引入
+    /// 颜色空间转换导致无法逐像素相同。详见 BoardPlateLayer 的说明。
     func draw(_ ctx: RenderContext) {
         guard !decals.isEmpty, let cg = ctx.cg else { return }
         let cell = ctx.cell, now = ctx.now

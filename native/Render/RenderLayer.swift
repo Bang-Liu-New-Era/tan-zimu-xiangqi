@@ -50,6 +50,8 @@ struct RenderContext {
     /// 将军红闪与提示发光的截止时刻
     var flashUntil: Double = 0
     var hintUntil: Double = 0
+    /// 屏幕缩放 (Retina = 2)。离屏缓存要靠它对齐设备像素网格。
+    var scale: CGFloat = 2
     var scene = BoardScene()
 
     var boardW: CGFloat { cell * 8 }

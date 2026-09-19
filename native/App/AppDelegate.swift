@@ -134,8 +134,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
                 let born = fxSpec.contains("crack_mid")
                     ? CACurrentMediaTime() + 1.05
                     : CACurrentMediaTime() - 1.0
+                // XQ_CRACKS=N 可指定裂纹数量 (默认 5) —— 用于测量"裂痕很多时"的每帧开销
+                let want = Int(ProcessInfo.processInfo.environment["XQ_CRACKS"] ?? "") ?? 5
                 let picks: [(Int, CGFloat)] = [(40, 1.00), (58, 0.92), (30, 0.80), (49, 0.72), (67, 0.85)]
-                for (sq, pw) in picks { boardView.debugAddCrack(sq: sq, born: born, power: pw) }
+                for i in 0..<max(0, want) {
+                    let (sq, pw) = picks[i % picks.count]
+                    // 超过 5 道时摊到整盘, 避免所有裂纹挤在同一格
+                    let spread = i < picks.count ? sq : (i * 7 + 3) % 90
+                    boardView.debugAddCrack(sq: spread, born: born, power: pw * (i < picks.count ? 1 : 0.9))
+                }
             }
             if fxSpec.contains("storm")        { boardView.weather.setKind(.storm) }
             else if fxSpec.contains("rain")    { boardView.weather.setKind(.rain) }
