@@ -5,7 +5,11 @@
 //  四类标记: 上一步起点蓝点 / 合法落点 / 提示发光 / 威胁红圈。
 //  它们都是「在棋盘上叠的标记」, 与棋子本体无关, 所以自成一层的。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 
 /// 棋盘标记层: 起点蓝点 + 合法落点 + 提示 + 威胁。跟随震屏。
 final class MarkerLayer: RenderLayer {
@@ -24,9 +28,9 @@ final class MarkerLayer: RenderLayer {
             if let cg = ctx.cg {
                 cg.saveGState()
                 let cols = [
-                    NSColor(calibratedRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.85).cgColor,
-                    NSColor(calibratedRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.38).cgColor,
-                    NSColor(calibratedRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.00).cgColor,
+                    XColor(crossRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.85).cgColor,
+                    XColor(crossRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.38).cgColor,
+                    XColor(crossRed: 0.28, green: 0.64, blue: 1.0, alpha: 0.00).cgColor,
                 ] as CFArray
                 if let g = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(),
                                       colors: cols, locations: [0.0, 0.40, 1.0]) {
@@ -35,11 +39,11 @@ final class MarkerLayer: RenderLayer {
                 }
                 cg.restoreGState()
             }
-            NSColor(calibratedRed: 0.20, green: 0.55, blue: 1.0, alpha: 0.95).setFill()
-            NSBezierPath(ovalIn: NSRect(x: a.x - rr, y: a.y - rr, width: dot, height: dot)).fill()
-            NSColor(calibratedWhite: 1, alpha: 0.85).setFill()
+            XColor(crossRed: 0.20, green: 0.55, blue: 1.0, alpha: 0.95).setFill()
+            XBezierPath(ovalIn: CGRect(x: a.x - rr, y: a.y - rr, width: dot, height: dot)).fill()
+            XColor(crossWhite: 1, alpha: 0.85).setFill()
             let cr = rr * 0.38
-            NSBezierPath(ovalIn: NSRect(x: a.x - cr, y: a.y - cr, width: 2 * cr, height: 2 * cr)).fill()
+            XBezierPath(ovalIn: CGRect(x: a.x - cr, y: a.y - cr, width: 2 * cr, height: 2 * cr)).fill()
         }
         // 选中高亮: 不额外画填充/描边 —— 棋子已离板抬起, 原位只留那片深灰投影, 避免在投影边缘形成"边框"
         // (模拟模式的选中反馈同样由"抬起"承担)
@@ -50,20 +54,20 @@ final class MarkerLayer: RenderLayer {
             let cap = s.board[t] != 0
             if cap {
                 if s.simMode {
-                    NSColor(calibratedRed: 1.0, green: 0.55, blue: 0.1, alpha: 0.95).setStroke()
+                    XColor(crossRed: 1.0, green: 0.55, blue: 0.1, alpha: 0.95).setStroke()
                 } else {
-                    NSColor(calibratedRed: 0.9, green: 0.2, blue: 0.15, alpha: 0.9).setStroke()
+                    XColor(crossRed: 0.9, green: 0.2, blue: 0.15, alpha: 0.9).setStroke()
                 }
-                NSBezierPath.defaultLineWidth = 2.5
-                NSBezierPath(ovalIn: NSRect(x: c.x - cell * 0.46, y: c.y - cell * 0.46,
+                xqDefaultLineWidth = 2.5
+                XBezierPath(ovalIn: CGRect(x: c.x - cell * 0.46, y: c.y - cell * 0.46,
                                             width: cell * 0.92, height: cell * 0.92)).stroke()
             } else {
                 if s.simMode {
-                    NSColor(calibratedRed: 1.0, green: 0.78, blue: 0.2, alpha: 0.9).setFill()
+                    XColor(crossRed: 1.0, green: 0.78, blue: 0.2, alpha: 0.9).setFill()
                 } else {
-                    NSColor(calibratedRed: 0.2, green: 0.5, blue: 0.2, alpha: 0.8).setFill()
+                    XColor(crossRed: 0.2, green: 0.5, blue: 0.2, alpha: 0.8).setFill()
                 }
-                NSBezierPath(ovalIn: NSRect(x: c.x - cell * 0.12, y: c.y - cell * 0.12,
+                XBezierPath(ovalIn: CGRect(x: c.x - cell * 0.12, y: c.y - cell * 0.12,
                                            width: cell * 0.24, height: cell * 0.24)).fill()
             }
         }
@@ -72,17 +76,17 @@ final class MarkerLayer: RenderLayer {
             let pulse = 0.5 + 0.5 * sin(now * 6)
             for sq in [h.0, h.1] {
                 let c = ctx.center(sq)
-                NSColor(calibratedRed: 1, green: 0.85, blue: 0.2, alpha: 0.3 + 0.4 * pulse).setFill()
-                NSBezierPath(ovalIn: NSRect(x: c.x - cell * 0.5, y: c.y - cell * 0.5,
+                XColor(crossRed: 1, green: 0.85, blue: 0.2, alpha: 0.3 + 0.4 * pulse).setFill()
+                XBezierPath(ovalIn: CGRect(x: c.x - cell * 0.5, y: c.y - cell * 0.5,
                                            width: cell, height: cell)).fill()
             }
         }
         // 威胁红圈
         for sq in s.threats {
             let c = ctx.center(sq)
-            NSColor(calibratedRed: 0.9, green: 0.1, blue: 0.1, alpha: 0.85).setStroke()
-            NSBezierPath.defaultLineWidth = 3
-            NSBezierPath(ovalIn: NSRect(x: c.x - cell * 0.46, y: c.y - cell * 0.46,
+            XColor(crossRed: 0.9, green: 0.1, blue: 0.1, alpha: 0.85).setStroke()
+            xqDefaultLineWidth = 3
+            XBezierPath(ovalIn: CGRect(x: c.x - cell * 0.46, y: c.y - cell * 0.46,
                                         width: cell * 0.92, height: cell * 0.92)).stroke()
         }
     }
@@ -118,7 +122,7 @@ final class DebugPathLayer: RenderLayer {
                                 y: base.y + nm.y * s.perp * cell + s.lift * cell)
                 if started { path.addLine(to: p) } else { path.move(to: p); started = true }
             }
-            cg.setStrokeColor(NSColor(calibratedHue: CGFloat(i) / CGFloat(shapes.count),
+            cg.setStrokeColor(XColor(crossHue: CGFloat(i) / CGFloat(shapes.count),
                                       saturation: 0.85, brightness: 0.95, alpha: 0.92).cgColor)
             cg.setLineWidth(3.0)
             cg.setLineCap(.round)

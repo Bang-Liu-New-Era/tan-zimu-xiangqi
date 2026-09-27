@@ -5,22 +5,28 @@
 //  本文件由 native/XiangqiApp.swift 拆分而来 (tools/split_xiangqi.py, P1 纯搬运)。
 //  拆分过程只做位置搬迁, 未改动任何逻辑。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 import AVFoundation
 import JavaScriptCore
 import CoreText
 
 enum Ease: String, CaseIterable {
-    case smooth, linear, easeIn, easeOut, easeInOut, snap, over
+    // 顺序即菜单顺序; 索引 0 是默认 —— 「渐快」配合「重锤」:
+    // 起手从容提子, 末段全速砸下, 落点速度最大。
+    case easeIn, smooth, linear, easeOut, easeInOut, snap, over
     var label: String {
         switch self {
-        case .smooth:    return "平滑"
-        case .linear:    return "匀速"
-        case .easeIn:    return "渐快"
-        case .easeOut:   return "渐慢"
-        case .easeInOut: return "缓入缓出"
-        case .snap:      return "抢子"
-        case .over:      return "过冲"
+        case .easeIn:             return "渐快(发力)"
+        case .smooth:             return "平滑"
+        case .linear:             return "匀速"
+        case .easeOut:            return "渐慢"
+        case .easeInOut:          return "缓入缓出"
+        case .snap:               return "抢子"
+        case .over:               return "过冲"
         }
     }
     func f(_ t: CGFloat) -> CGFloat {
@@ -42,9 +48,12 @@ enum Ease: String, CaseIterable {
 /// 由绘制方乘以格子尺寸。因此与窗口缩放、棋盘 180° 翻转完全无关。
 struct Trajectory {
     enum Shape: String, CaseIterable {
-        case arc, straight, bezier, flank, zigzag, spiral
+        // 顺序即菜单顺序; 索引 0 是默认 —— 「重锤」:
+        // 不是抛物线飘过去, 而是抡起来一记砸下。
+        case slam, arc, straight, bezier, flank, zigzag, spiral
         var label: String {
             switch self {
+            case .slam:     return "重锤(发力)"
             case .arc:      return "抛物线"
             case .straight: return "贴地推"
             case .bezier:   return "贝塞尔"
@@ -54,24 +63,37 @@ struct Trajectory {
             }
         }
     }
-    var shape: Shape = .arc
-    var ease: Ease = .smooth
+    var shape: Shape = .slam
+    var ease: Ease = .easeIn
     var fly: Double = 0.26          // 飞行时长(秒)
     var land: Double = 0.13         // 落地回弹时长
     var hop: CGFloat = 0.30         // 抬升峰值(格)
     var spin: CGFloat = 14          // 空中旋转(度)
     var scalePeak: CGFloat = 0.13   // 弧顶放大
     var bend: CGFloat = 1           // 侧向绕行方向 +1 / -1
+    /// 落地冲击力倍率: 直接放大"压扁回弹"的幅度。重锤 = 1.9, 其余 = 1.0。
+    var impact: CGFloat = 1.0
     /// 途经格(可选)。非空时按折线依次经过这些交叉点, 覆盖 shape 的路径。
     var via: [Int] = []
 
-    static func of(_ s: Shape) -> Trajectory { var t = Trajectory(); t.shape = s; return t }
+    static func of(_ s: Shape) -> Trajectory {
+        var t = Trajectory(); t.shape = s
+        if s == .slam {                     // 重锤: 更短促的飞行 + 更狠的落地
+            t.fly = 0.20
+            t.land = 0.16
+            t.hop = 0.22
+            t.impact = 1.9
+        }
+        return t
+    }
 
     /// 采样飞行姿态 → (侧向偏移(格), 抬升(格), 旋转(rad), 缩放)
     func sample(_ t: CGFloat) -> (perp: CGFloat, lift: CGFloat, rot: CGFloat, scale: CGFloat) {
         let u = max(0, min(1, t))
         let (perp, lift) = shapeScalars(u)
-        let rot = spin * .pi / 180 * sin(.pi * u)
+        // 重锤几乎不旋转 —— 是"摁下去"不是"翻着飞"
+        let spinDeg: CGFloat = shape == .slam ? spin * 0.3 : spin
+        let rot = spinDeg * .pi / 180 * sin(.pi * u)
         let k = hop > 0.0001 ? lift / hop : 0
         return (perp, lift, rot, 1 + scalePeak * k)
     }
@@ -79,6 +101,10 @@ struct Trajectory {
     private func shapeScalars(_ u: CGFloat) -> (perp: CGFloat, lift: CGFloat) {
         let bell = 4 * u * (1 - u)                       // 0 → 1 → 0
         switch shape {
+        case .slam:
+            // 抬升在 u≈0.33 就到顶(sin(π·u^0.62) 的峰), 之后一路下降;
+            // 配合「渐快」缓动, 末段是全速俯冲 —— 像抡起棋子狠狠拍在棋盘上。
+            return (0, hop * sin(.pi * pow(u, 0.62)))
         case .arc:      return (0, hop * bell)
         case .straight: return (0, hop * 0.10 * bell)
         case .bezier:   return (bend * 0.55 * sin(.pi * u), hop * bell * 0.90)

@@ -6,7 +6,7 @@
 //    ① 持有局面 (board/lastMove/选中/落点/威胁) 与鼠标命中测试
 //    ② 维护 60fps 主循环: 按需启动, 全部图层都不动了就停
 //    ③ 每帧把状态打成 RenderContext, 交给 RenderPipeline 画
-//    ④ 向对局逻辑暴露一组动作接口 (animateMove / runHorse / showBigText …)
+//    ④ 向对局逻辑暴露一组动作接口 (animateMove / showBigText …)
 //
 //  绘制本身已经不在这里了 —— 每种视觉元素是一个 RenderLayer:
 //    Render/BoardPlateLayer    棋盘石板
@@ -14,17 +14,25 @@
 //    Render/MarkerLayer        起点蓝点 / 合法落点 / 提示 / 威胁
 //    Render/PieceLayer         棋子 + 抬起 + 走子动画
 //    FX/BurstLayer             落地涟漪 + 吃子爆点
-//    FX/ActorLayer             屏幕演员 (马)
-//    FX/WeatherLayer ×2        远景雨 / 近景雨
 //    Render/DebugPathLayer     调试轨迹叠加
 //    Render/OverlayLayer       将军红闪 + 绝杀大字
 //
 //  新增一种特效: 新建一个文件实现 RenderLayer, 再在 buildPipeline() 里加一行。
 //  不需要动本文件的其它部分, 也不需要动对局逻辑与菜单。
 //
+#if canImport(AppKit)
 import AppKit
+#endif
+#if canImport(AppKit)
 
 class BoardView: NSView {
+
+    // MARK: - 震屏强度
+
+    /// 全局震屏强度系数, 所有落子震幅都会乘上它。
+    /// 1.0 = 原始力度; 0.5 = 减弱 50%; 0 = 完全关闭震屏。
+    /// 调"震感强弱"只改这一处, 不用去翻各个特效分支里的数字。
+    static let shakeScale: CGFloat = 0.5
 
     // MARK: - 局面 (由对局逻辑写入)
 
@@ -63,6 +71,7 @@ class BoardView: NSView {
     var liftPiece: Int = 0
     private var lastTickT: Double = 0
     var shakeUntil: Double = 0
+    var shakeAmp: CGFloat = 4 * BoardView.shakeScale   // 震屏幅度(px): 吃子砸裂 = 6, 普通落子 = 3 (再乘全局系数)
     var flashUntil: Double = 0
     var hintUntil: Double = 0
     private var timer: Timer?
@@ -71,9 +80,7 @@ class BoardView: NSView {
 
     let crackLayer = CrackLayer()
     let burstLayer = BurstLayer()
-    let actorLayer = ActorLayer()
     let overlayLayer = OverlayLayer()
-    let weatherState = WeatherState()
     private let pipeline = RenderPipeline()
 
     // MARK: - 组装
@@ -89,28 +96,20 @@ class BoardView: NSView {
 
     /// 图层注册表 —— 新增特效唯一的接入点。顺序 = 绘制顺序 (从下往上)。
     private func buildPipeline() {
-        pipeline.register(WeatherLayer(.back, weatherState))   // 远景雨幕 (棋盘之下)
         pipeline.register(BoardPlateLayer())                   // 棋盘石板
         pipeline.register(crackLayer)                          // 永久裂痕
         pipeline.register(MarkerLayer())                       // 各类标记
         pipeline.register(PieceLayer())                        // 棋子 + 抬起 + 走子动画
         pipeline.register(burstLayer)                          // 涟漪 + 吃子爆点
-        pipeline.register(actorLayer)                          // 演员 (马)
-        pipeline.register(WeatherLayer(.front, weatherState))  // 近景雨幕 + 水花 + 闪电
         pipeline.register(DebugPathLayer())                    // 调试轨迹
         pipeline.register(overlayLayer)                        // 将军红闪 + 绝杀大字
     }
 
-    /// 图层栈快照, 形如 "rainBack → board → cracks* …" (带 * 表示该层仍在动)
+    /// 图层栈快照, 形如 "board → cracks* → pieces …" (带 * 表示该层仍在动)
     var layerSummary: String { pipeline.summary }
 
     // MARK: - 兼容旧调用点的转发
 
-    /// 天气 (雨)。AppDelegate 用 `boardView.weather.setKind(...)` 切换。
-    var weather: Weather {
-        get { weatherState.weather }
-        set { weatherState.weather = newValue }
-    }
     /// 绝杀大字
     var bigText: (text: String, start: Double, dur: Double)? {
         get { overlayLayer.bigText }
@@ -194,7 +193,7 @@ class BoardView: NSView {
         ctx.bounds = bounds
         ctx.ox = ox; ctx.oy = oy; ctx.cell = cell
         ctx.now = now; ctx.dt = dt
-        ctx.shakeX = now < shakeUntil ? sin(now * 40) * 4 : 0
+        ctx.shakeX = now < shakeUntil ? sin(now * 40) * shakeAmp : 0
         ctx.flashUntil = flashUntil
         ctx.hintUntil = hintUntil
         ctx.scale = window?.backingScaleFactor ?? NSScreen.main?.backingScaleFactor ?? 2
@@ -254,7 +253,6 @@ class BoardView: NSView {
         crackLayer.forge(sq: sq, born: born, power: power)
         setNeedsDisplay(bounds)
     }
-
-    /// 让一匹马从画面外跑过
-    func runHorse() { actorLayer.runHorse(); kick() }
 }
+
+#endif

@@ -8,25 +8,33 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SND = os.path.normpath(os.path.join(HERE, "..", "Resources", "sounds"))
 OUT = os.path.normpath(os.path.join(HERE, "..", "..", "音效试听台.html"))
 
+# 每组的类别键 —— 用来套用与 Audio/SoundEngine.swift 完全一致的分类增益,
+# 这样试听台里听到的比例就是 App 里实际播放的比例。
 GROUPS = [
-    ("落子（石板撞击）", "棋子落在石板上的清脆「啪」声，每次随机换变体并微调音高，不会机械重复。",
-     [("move_1", "落子 A"), ("move_2", "落子 B"), ("move_3", "落子 C"), ("move_4", "落子 D"),
-      ("lift_1", "提子（离板）"), ("lift_2", "提子 B")]),
-    ("吃子（两声连击）", "被吃掉的棋子被撞开、再落到棋盘上的两段式撞击，比落子更闷更重。",
+    ("move", "落子（外部素材）", "由 AI 生成的短促闷响，经 prep_sfx.py 规范化（裁掉 173ms 起始空白、归一化到 -1 dBFS）。",
+     [("move_1", "落子"), ("lift_1", "提子（离板）"), ("lift_2", "提子 B")]),
+    ("capture", "吃子（两声连击）", "被吃掉的棋子被撞开、再落到棋盘上的两段式撞击，比落子更闷更重。",
      [("capture_1", "吃子 A"), ("capture_2", "吃子 B"), ("capture_3", "吃子 C")]),
-    ("将军（编钟余韵）", "低沉重击 + 非谐金属余韵，分量足。",
+    ("check", "将军（编钟余韵）", "低沉重击 + 非谐金属余韵，分量足。",
      [("check_1", "将军 A"), ("check_2", "将军 B"), ("check_3", "将军 C")]),
-    ("人声播报", "macOS 中文语音合成的短促播报，做过均衡与房间处理。",
+    ("voice", "人声播报", "macOS 中文语音合成的短促播报，做过均衡与房间处理。",
      [("voice_chi", "「吃」"), ("voice_jiangjun", "「将军」"),
       ("voice_juesha", "「绝杀」"), ("voice_heqi", "「和棋」")]),
-    ("选子 / 胜负", "轻触选中棋子；对局结束的编钟收尾音。",
+    ("click", "选子 / 胜负", "轻触选中棋子；对局结束的编钟收尾音。",
      [("click", "选中"), ("win", "胜"), ("lose", "负")]),
 ]
 
+# 与 SoundEngine.gains 一一对应; 未列出的类别按 1.0
+GAINS = {"move": 0.85, "lift": 0.45, "capture": 1.0, "check": 0.95,
+         "click": 0.5, "win": 0.85, "lose": 0.85}
+
+# 单文件 → 增益 (同组共用一个键; lift/win/lose 单独指定)
+FILE_GROUP = {}
+
 SCENES = [
-    ("普通走子", ["lift_1", "move_2"]),
+    ("普通走子", ["lift_1", "move_1"]),
     ("吃子 + 喊「吃」", ["lift_1", "capture_1", "voice_chi"]),
-    ("将军 + 喊「将军」", ["lift_1", "move_3", "check_1", "voice_jiangjun"]),
+    ("将军 + 喊「将军」", ["lift_1", "move_1", "check_1", "voice_jiangjun"]),
     ("绝杀", ["lift_1", "capture_2", "win", "voice_juesha"]),
 ]
 
@@ -37,9 +45,28 @@ def b64(name):
         return base64.b64encode(f.read()).decode()
 
 
+def build_file_gain():
+    """把 '文件 → 增益' 展开出来: 组内所有文件共用组键, 特例 (lift/win/lose) 单独覆盖。"""
+    g = {}
+    for key, _, _, items in GROUPS:
+        if key == "voice":
+            for n, _ in items:
+                g[n] = 1.0
+            continue
+        for n, _ in items:
+            if n in GAINS:                       # lift_1 / click / win / lose 等自带键
+                g[n] = GAINS[n]
+            elif key == "move" and n.startswith("lift"):
+                g[n] = GAINS["lift"]
+            else:
+                g[n] = GAINS.get(key, 1.0)
+    g["lift_2"] = GAINS["lift"]
+    return g
+
+
 def main():
     data = {}
-    for _, _, items in GROUPS:
+    for _, _, _, items in GROUPS:
         for n, _ in items:
             data[n] = b64(n)
     for _, seq in SCENES:
@@ -47,7 +74,7 @@ def main():
             data.setdefault(n, b64(n))
 
     blocks = []
-    for title, desc, items in GROUPS:
+    for _, title, desc, items in GROUPS:
         btns = "".join(
             f'<button class="snd" data-k="{n}"><span class="dot"></span>{lab}'
             f'<span class="dur">{os.path.getsize(os.path.join(SND, n + ".wav")) / 1024:.0f}K</span></button>'
@@ -58,6 +85,7 @@ def main():
         f'<button class="scene" data-seq="{",".join(seq)}">{lab}</button>' for lab, seq in SCENES)
 
     payload = "{" + ",".join(f'"{k}":"data:audio/wav;base64,{v}"' for k, v in data.items()) + "}"
+    gains_js = "{" + ",".join(f'"{k}":{v}' for k, v in build_file_gain().items()) + "}"
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN"><head><meta charset="utf-8">
@@ -95,7 +123,7 @@ def main():
 </style></head>
 <body><div class="wrap">
   <h1>人机中国象棋 · 音效试听台</h1>
-  <p class="sub">落子/吃子为物理建模合成（石板撞击 + 阻尼共振 + 房间反射），每类含多个变体；人声由 macOS 中文语音合成后再做均衡与混响处理。</p>
+  <p class="sub">落子为外部素材（已用 prep_sfx.py 规范化）；吃子、将军为物理建模合成（石板撞击 + 阻尼共振 + 房间反射），含多个变体；人声由 macOS 中文语音合成后再做均衡与混响处理。试听台不套用 App 内的分类增益，音量以文件自身电平为准。</p>
   <section class="scenes"><h2>场景连播</h2>
     <p class="desc">按下后按真实对局顺序依次播放，感受衔接是否自然。</p>
     <div class="row">{scenes}</div>
@@ -105,6 +133,7 @@ def main():
 </div>
 <script>
 const SND = {payload};
+const GAIN = {gains_js};
 let cur = null, timer = [];
 function stopAll() {{
   if (cur) {{ cur.pause(); cur.currentTime = 0; cur = null; }}
@@ -114,6 +143,7 @@ function stopAll() {{
 function playOne(k, btn, delay) {{
   const run = () => {{
     const a = new Audio(SND[k]);
+    a.volume = Math.min(1, GAIN[k] === undefined ? 1 : GAIN[k]);   // 与 App 内的分类增益一致
     if (btn) btn.classList.add('playing');
     a.onended = () => {{ if (btn) btn.classList.remove('playing'); }};
     cur = a; a.play();
@@ -128,7 +158,7 @@ document.querySelectorAll('button.scene').forEach(b => {{
     stopAll();
     const seq = b.dataset.seq.split(',');
     let t = 0;
-    const gaps = {{ lift_1:0.30, move_2:0.30, move_3:0.30, capture_1:0.55, capture_2:0.55,
+    const gaps = {{ lift_1:0.30, move_1:0.30, capture_1:0.55, capture_2:0.55,
                     voice_chi:0.45, voice_jiangjun:0.60, check_1:0.55, voice_juesha:0.60, win:0.55 }};
     seq.forEach(n => {{ playOne(n, null, t); t += (gaps[n] || 0.5); }});
     b.classList.add('playing'); setTimeout(() => b.classList.remove('playing'), t * 1000 + 900);

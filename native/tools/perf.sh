@@ -14,11 +14,15 @@ BIN="/Applications/人机中国象棋.app/Contents/MacOS/Xiangqi"
 
 if [ ! -x "$BIN" ]; then echo "✗ 找不到 $BIN, 先跑 bash build_app.sh"; exit 2; fi
 
-one() {                       # one <场景> <秒数>
-  local fx="$1" secs="$2"
+one() {                       # one <XQ_FX 取值> <秒数> [附加环境变量]
+  local fx="$1" secs="$2" extra="${3:-}"
   local log="/tmp/xqperf.log"
   : > "$log"
-  env XQ_PERF=1 "XQ_FX=$fx" "$BIN" >/dev/null 2>"$log" &
+  if [ -n "$extra" ]; then
+    env XQ_PERF=1 "XQ_FX=$fx" "$extra" "$BIN" >/dev/null 2>"$log" &
+  else
+    env XQ_PERF=1 "XQ_FX=$fx" "$BIN" >/dev/null 2>"$log" &
+  fi
   local pid=$!
   sleep "$secs"
   kill "$pid" 2>/dev/null; wait "$pid" 2>/dev/null
@@ -41,12 +45,8 @@ one() {                       # one <场景> <秒数>
 desc() {                      # 把 XQ_FX 取值翻成人话
   case "$1" in
     none)      echo "空棋盘 (静止, 基准)" ;;
-    rain)      echo "大雨 (320 雨滴)" ;;
-    storm)     echo "雷雨 (500 雨滴+闪电)" ;;
-    drizzle)   echo "小雨 (150 雨滴)" ;;
-    crack,rain) echo "大雨 + 5 道裂痕" ;;
-    horse)     echo "空棋盘 + 马跑过" ;;
     crack)     echo "5 道裂痕 (静止)" ;;
+    crack40)   echo "40 道裂痕 (静止, 满负荷)" ;;
     *)         echo "$1" ;;
   esac
 }
@@ -60,10 +60,12 @@ else
   echo ""
   printf '  %-22s %s\n' "场景" "实测"
   echo "  ──────────────────────────────────────────────────────────────"
-  for fx in none drizzle rain storm "crack,rain" horse; do
-    one "$fx" 6
+  for spec in "none||" "crack|XQ_CRACKS=5|" "crack|XQ_CRACKS=40|40 道裂痕"; do
+    IFS='|' read -r fx extra label <<< "$spec"
+    [ -n "$label" ] || label="$fx"
+    one "$fx" 6 "$extra"
   done
   echo ""
-  echo "  注: 只有带持续动画的场景 (雨/马) 能采到样本 —— 静止场景的定时器会自动停掉,"
-  echo "      这本身就是「没有空转」的证据。"
+  echo "  注: 天气/演员等常驻动画已于 2026-09-25 移除; 静止场景的定时器会自动停掉,"
+  echo "      这本身就是「没有空转」的证据。要走子动画的帧采样请在游戏内连续走子。"
 fi

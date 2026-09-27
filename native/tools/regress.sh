@@ -8,8 +8,9 @@
 # 场景分两类:
 #   [strict] clear / paths / crack —— 无随机数、无动画推进, 必须逐像素相同(容差 0)。
 #            这几个场景是「行为未变」的硬证据。
-#   [loose]  crackmid / rain / storm / horse —— 依赖快照瞬间的精确时刻(裂痕生长进度、
-#            雨滴相位、马的位置), 两次运行本就不同, 只做容差比对。
+#            注: paths 场景会画出全部轨迹形状 —— 增删/修改 Shape 后基线要重拍。
+#   [loose]  crackmid —— 依赖快照瞬间的精确时刻(裂痕生长进度), 两次运行本就不同,
+#            只做容差比对。
 #
 #   crackmid 为何不是 strict (2026-09-19 实测):
 #     「裂痕生长中」场景的可见长度 = (快照时刻 - 裂纹出生时刻) / 生长时长,
@@ -20,7 +21,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 NATIVE="$PWD"
-BIN="/Applications/人机中国象棋.app/Contents/MacOS/Xiangqi"
+BIN="${XQ_BIN:-/Applications/人机中国象棋.app/Contents/MacOS/Xiangqi}"
 
 # 名称|环境变量|严格性
 SCENES=(
@@ -28,9 +29,6 @@ SCENES=(
   "paths|XQ_FX=paths|strict"
   "crack|XQ_FX=crack|strict"
   "crackmid|XQ_FX=crack,crack_mid|loose"
-  "rain|XQ_FX=rain|loose"
-  "storm|XQ_FX=crack,storm|loose"
-  "horse|XQ_FX=crack,horse|loose"
 )
 
 shoot() {                       # shoot <输出路径> <env...>
@@ -109,7 +107,7 @@ done
 
 echo ""
 if [ $DIFF -eq 0 ]; then
-  echo "✓✓ 回归通过: 3 个确定场景逐像素一致, 4 个动态场景在容差内"
+  echo "✓✓ 回归通过: 3 个确定场景逐像素一致, 1 个动态场景在容差内"
   exit 0
 else
   echo "✗✗ 回归未通过: $DIFF 个场景异常"

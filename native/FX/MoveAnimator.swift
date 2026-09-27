@@ -5,7 +5,11 @@
 //  负责"一次走子"的编排: 起手清掉抬起状态 → 交给轨迹引擎播飞行 → 落地回弹 →
 //  顺带把吃子爆点、棋盘开裂、冲击震屏一起挂钩到「落地那一刻」。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 
 extension BoardView {
     /// 一次走子动画的记录 (轨迹提供形状/缓动/姿态, 落地后接阻尼回弹)
@@ -31,6 +35,11 @@ extension BoardView {
         anim = MoveAnim(from: from, to: to, piece: piece, start: now, traj: t)
         let landT = now + fly                       // 落地那一刻
         burstLayer.landRipple = (to, landT)
+        // 每一步落板都带一次短促震屏 —— 棋子是"拍"在棋盘上的, 不是轻轻放上去的。
+        // 吃子砸裂震得更狠(配合下方 crack 分支把幅度再抬高)。
+        // 幅度统一乘全局系数 shakeScale, 想整体改震感只需改 BoardView.shakeScale。
+        shakeAmp = (capture ? 6 : 3) * BoardView.shakeScale
+        shakeUntil = max(shakeUntil, landT + (capture ? 0.20 : 0.10))
         if capture {
             let kind = (piece == 6 || piece == 14) ? 1   // 炮
                 : (piece == 4 || piece == 12) ? 2          // 马
@@ -52,7 +61,8 @@ extension BoardView {
                 let seed = UInt64(bitPattern: Int64(to &* 7919 &+ 104729))
                     &+ UInt64(now * 1000) &* 2_654_435_761
                 crackLayer.add(CrackForge.forge(sq: to, born: landT, seed: seed, power: power))
-                shakeUntil = max(shakeUntil, landT + 0.20)   // 冲击震屏
+                shakeAmp = 6.5 * BoardView.shakeScale
+                shakeUntil = max(shakeUntil, landT + 0.20)   // 冲击震屏(砸裂棋盘)
             }
         }
         kick()

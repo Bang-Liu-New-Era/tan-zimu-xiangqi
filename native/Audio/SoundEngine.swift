@@ -5,7 +5,11 @@
 //  本文件由 native/XiangqiApp.swift 拆分而来 (tools/split_xiangqi.py, P1 纯搬运)。
 //  拆分过程只做位置搬迁, 未改动任何逻辑。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 import AVFoundation
 import JavaScriptCore
 import CoreText
@@ -19,7 +23,10 @@ final class SoundEngine {
 
     /// 每类音效的变体文件 (随机取一个)
     private static let groups: [String: [String]] = [
-        "move":    ["move_1", "move_2", "move_3", "move_4"],
+        // 落子: 2026-09-27 换成外部素材 (AI 生成的短促闷响, 经 tools/prep_sfx.py 规范化)。
+        // 单变体 —— 想要"每步略有不同"的听感, 再录/生成几条, 在这里加 move_2 / move_3 即可。
+        // 旧的合成落子变体备份在 tools/archive/sounds_synth_move/。
+        "move":    ["move_1"],
         "lift":    ["lift_1", "lift_2"],
         "capture": ["capture_1", "capture_2", "capture_3"],
         "check":   ["check_1", "check_2", "check_3"],

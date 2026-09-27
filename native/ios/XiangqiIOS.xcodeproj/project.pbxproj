@@ -1,0 +1,336 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	objectVersion = 77;
+	classes = {
+	};
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A1B2C3D4E5F60000000000E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D1 /* AppDelegate.swift */; };
+		A1B2C3D4E5F60000000000E2 /* sounds in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D2 /* sounds */; };
+		A1B2C3D4E5F60000000000E3 /* pieces in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D3 /* pieces */; };
+		A1B2C3D4E5F60000000000E4 /* boards in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D4 /* boards */; };
+		A1B2C3D4E5F60000000000E5 /* xiangqi.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D5 /* xiangqi.js */; };
+		A1B2C3D4E5F60000000000E6 /* ai.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D6 /* ai.js */; };
+		A1B2C3D4E5F60000000000E7 /* coach.js in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D7 /* coach.js */; };
+		A1B2C3D4E5F60000000000E8 /* AppIcon60x60@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000D8 /* AppIcon60x60@2x.png */; };
+		A1B2C3D4E5F60000000000E9 /* AppIcon60x60@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000DA /* AppIcon60x60@3x.png */; };
+		A1B2C3D4E5F60000000000EA /* AppIcon76x76@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000DB /* AppIcon76x76@2x.png */; };
+		A1B2C3D4E5F60000000000EB /* AppIcon83.5x83.5@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000DD /* AppIcon83.5x83.5@2x.png */; };
+		A1B2C3D4E5F60000000000EC /* AppIcon1024.png in Resources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60000000000DE /* AppIcon1024.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A1B2C3D4E5F60000000000A4 /* XiangqiIOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XiangqiIOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1B2C3D4E5F60000000000D1 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ../App/AppDelegate.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D2 /* sounds */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sounds; path = ../Resources/sounds; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D3 /* pieces */ = {isa = PBXFileReference; lastKnownFileType = folder; name = pieces; path = ../Resources/pieces; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D4 /* boards */ = {isa = PBXFileReference; lastKnownFileType = folder; name = boards; path = ../Resources/boards; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D5 /* xiangqi.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = xiangqi.js; path = ../../engine/xiangqi.js; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D6 /* ai.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = ai.js; path = ../../engine/ai.js; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D7 /* coach.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = coach.js; path = ../../engine/coach.js; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D8 /* AppIcon60x60@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon/AppIcon60x60@2x.png"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000DA /* AppIcon60x60@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon/AppIcon60x60@3x.png"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000DB /* AppIcon76x76@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon/AppIcon76x76@2x.png"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000DD /* AppIcon83.5x83.5@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "icon/AppIcon83.5x83.5@2x.png"; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000DE /* AppIcon1024.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon/AppIcon1024.png; sourceTree = "<group>"; };
+		A1B2C3D4E5F60000000000D9 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = ../App/main.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		A1B2C3D4E5F60000000000B1 /* src */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = src;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B2 /* Core */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../Core;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B3 /* Render */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../Render;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B4 /* FX */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../FX;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B5 /* Audio */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../Audio;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B6 /* Support */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../Support;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000B7 /* UI */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ../UI;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A1B2C3D4E5F60000000000A7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A1B2C3D4E5F60000000000A2 = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60000000000B1 /* src */,
+				A1B2C3D4E5F60000000000B2 /* Core */,
+				A1B2C3D4E5F60000000000B3 /* Render */,
+				A1B2C3D4E5F60000000000B4 /* FX */,
+				A1B2C3D4E5F60000000000B5 /* Audio */,
+				A1B2C3D4E5F60000000000B6 /* Support */,
+				A1B2C3D4E5F60000000000B7 /* UI */,
+				A1B2C3D4E5F60000000000D0 /* App */,
+				A1B2C3D4E5F60000000000D9 /* main.swift */,
+				A1B2C3D4E5F60000000000DC /* Resources */,
+				A1B2C3D4E5F60000000000A3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000A3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60000000000A4 /* XiangqiIOS.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000D0 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60000000000D1 /* AppDelegate.swift */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		A1B2C3D4E5F60000000000DC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				A1B2C3D4E5F60000000000D2 /* sounds */,
+				A1B2C3D4E5F60000000000D3 /* pieces */,
+				A1B2C3D4E5F60000000000D4 /* boards */,
+				A1B2C3D4E5F60000000000D5 /* xiangqi.js */,
+				A1B2C3D4E5F60000000000D6 /* ai.js */,
+				A1B2C3D4E5F60000000000D7 /* coach.js */,
+				A1B2C3D4E5F60000000000D8 /* AppIcon60x60@2x.png */,
+				A1B2C3D4E5F60000000000DA /* AppIcon60x60@3x.png */,
+				A1B2C3D4E5F60000000000DB /* AppIcon76x76@2x.png */,
+				A1B2C3D4E5F60000000000DD /* AppIcon83.5x83.5@2x.png */,
+				A1B2C3D4E5F60000000000DE /* AppIcon1024.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A1B2C3D4E5F60000000000A5 /* XiangqiIOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1B2C3D4E5F60000000000A9 /* Build configuration list for PBXNativeTarget "XiangqiIOS" */;
+			buildPhases = (
+				A1B2C3D4E5F60000000000A6 /* Sources */,
+				A1B2C3D4E5F60000000000A7 /* Frameworks */,
+				A1B2C3D4E5F60000000000A8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				A1B2C3D4E5F60000000000B1 /* src */,
+				A1B2C3D4E5F60000000000B2 /* Core */,
+				A1B2C3D4E5F60000000000B3 /* Render */,
+				A1B2C3D4E5F60000000000B4 /* FX */,
+				A1B2C3D4E5F60000000000B5 /* Audio */,
+				A1B2C3D4E5F60000000000B6 /* Support */,
+				A1B2C3D4E5F60000000000B7 /* UI */,
+			);
+			name = XiangqiIOS;
+			packageProductDependencies = (
+			);
+			productName = XiangqiIOS;
+			productReference = A1B2C3D4E5F60000000000A4 /* XiangqiIOS.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A1B2C3D4E5F60000000000A1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					A1B2C3D4E5F60000000000A5 = {
+						CreatedOnToolsVersion = 26.0;
+					};
+				};
+			};
+			buildConfigurationList = A1B2C3D4E5F60000000000AA /* Build configuration list for PBXProject "XiangqiIOS" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A1B2C3D4E5F60000000000A2;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A1B2C3D4E5F60000000000A3 /* Products */;
+			projectDir = "";
+			projectRoot = "";
+			targets = (
+				A1B2C3D4E5F60000000000A5 /* XiangqiIOS */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A1B2C3D4E5F60000000000A8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60000000000E2 /* sounds in Resources */,
+				A1B2C3D4E5F60000000000E3 /* pieces in Resources */,
+				A1B2C3D4E5F60000000000E4 /* boards in Resources */,
+				A1B2C3D4E5F60000000000E5 /* xiangqi.js in Resources */,
+				A1B2C3D4E5F60000000000E6 /* ai.js in Resources */,
+				A1B2C3D4E5F60000000000E7 /* coach.js in Resources */,
+				A1B2C3D4E5F60000000000E8 /* AppIcon60x60@2x.png in Resources */,
+				A1B2C3D4E5F60000000000E9 /* AppIcon60x60@3x.png in Resources */,
+				A1B2C3D4E5F60000000000EA /* AppIcon76x76@2x.png in Resources */,
+				A1B2C3D4E5F60000000000EB /* AppIcon83.5x83.5@2x.png in Resources */,
+				A1B2C3D4E5F60000000000EC /* AppIcon1024.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A1B2C3D4E5F60000000000A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1B2C3D4E5F60000000000E1 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A1B2C3D4E5F60000000000AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEAD_CODE_STRIPPING = YES;
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F60000000000AC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEAD_CODE_STRIPPING = YES;
+			};
+			name = Release;
+		};
+		A1B2C3D4E5F60000000000AD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tanzimu.xiangqi.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1B2C3D4E5F60000000000AE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_TESTABILITY = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 2.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tanzimu.xiangqi.ios;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A1B2C3D4E5F60000000000AA /* Build configuration list for PBXProject "XiangqiIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F60000000000AB /* Debug */,
+				A1B2C3D4E5F60000000000AC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1B2C3D4E5F60000000000A9 /* Build configuration list for PBXNativeTarget "XiangqiIOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B2C3D4E5F60000000000AD /* Debug */,
+				A1B2C3D4E5F60000000000AE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A1B2C3D4E5F60000000000A1 /* Project object */;
+}

@@ -5,10 +5,13 @@
 //  本文件由 native/XiangqiApp.swift 拆分而来 (tools/split_xiangqi.py, P1 纯搬运)。
 //  拆分过程只做位置搬迁, 未改动任何逻辑。
 //
+#if canImport(AppKit)
 import AppKit
+#endif
 import AVFoundation
 import JavaScriptCore
 import CoreText
+#if canImport(AppKit)
 
 func buildMainMenu() -> NSMenu {
     let main = NSMenu()
@@ -20,7 +23,7 @@ func buildMainMenu() -> NSMenu {
     appMenu.addItem(NSMenuItem(title: "退出", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
     appItem.submenu = appMenu; main.addItem(appItem)
 
-    // 「特技」菜单: 走子轨迹 / 缓动 / 天气 / 裂痕 / 演员。勾选项即时生效并被记到 UserDefaults。
+    // 「特技」菜单: 走子轨迹 / 缓动 / 裂痕。勾选项即时生效并被记到 UserDefaults。
     let fxItem = NSMenuItem(title: "特技", action: nil, keyEquivalent: "")
     let fxMenu = NSMenu()
     func submenu(_ title: String, _ sel: Selector, _ labels: [String]) -> NSMenu {
@@ -39,19 +42,14 @@ func buildMainMenu() -> NSMenu {
                            Trajectory.Shape.allCases.map { $0.label })
     let easeMenu = submenu("缓动曲线", #selector(AppDelegate.pickEase(_:)),
                            Ease.allCases.map { $0.label })
-    let weatherMenu = submenu("天气", #selector(AppDelegate.pickWeather(_:)),
-                              Weather.Kind.allCases.map { $0.label })
     fxMenu.addItem(.separator())
     let crackIt = NSMenuItem(title: "吃子留裂痕", action: #selector(AppDelegate.toggleCrack), keyEquivalent: "")
     crackIt.target = delegate; fxMenu.addItem(crackIt)
     delegate.crackMenuItem = crackIt
     let clearIt = NSMenuItem(title: "清除棋盘裂痕", action: #selector(AppDelegate.doClearDecals), keyEquivalent: "")
     clearIt.target = delegate; fxMenu.addItem(clearIt)
-    fxMenu.addItem(.separator())
-    let horseIt = NSMenuItem(title: "马跑过画面", action: #selector(AppDelegate.doRunHorse), keyEquivalent: "")
-    horseIt.target = delegate; fxMenu.addItem(horseIt)
     fxItem.submenu = fxMenu; main.addItem(fxItem)
-    delegate.fxMenus = [trajMenu, easeMenu, weatherMenu]
+    delegate.fxMenus = [trajMenu, easeMenu]
     delegate.refreshFXMenu()
 
     let winItem = NSMenuItem(title: "窗口", action: nil, keyEquivalent: "")
@@ -64,3 +62,5 @@ func buildMainMenu() -> NSMenu {
     winItem.submenu = winMenu; main.addItem(winItem)
     return main
 }
+
+#endif

@@ -7,7 +7,7 @@
 + 二次接触 + 小型房间早期反射, 听感接近"棋子拍在石板上"。
 
 产出 (native/Resources/sounds/):
-  落子   move_1.wav .. move_4.wav     棋子落板 (4 个随机变体, 避免机械重复)
+  落子   move_1.wav                   棋子落板 —— **已改用外部素材, 本脚本默认不再生成**
   拿起   lift_1.wav lift_2.wav        手指提起棋子的轻微木质摩擦
   吃子   capture_1.wav .. capture_3.wav  两段式撞击(被吃子被击开 + 落在棋盘上)
   将军   check_1.wav .. check_3.wav   低沉重击 + 金属余韵
@@ -16,7 +16,8 @@
   人声   voice_chi.wav / voice_jiangjun.wav / voice_juesha.wav / voice_heqi.wav
          (用 macOS 内置中文语音 Tingting 合成, 再做均衡+房间混响处理)
 
-用法: python3 make_sounds.py
+用法: python3 make_sounds.py              # 生成除落子外的全部音效
+      python3 make_sounds.py --with-move  # 连落子一起重新合成(会覆盖外部素材!)
 """
 import math
 import os
@@ -322,11 +323,16 @@ def main():
         if os.path.exists(p):
             os.remove(p)
 
-    print("== 落子 (4 变体) ==")
-    for i in range(4):
-        rng = np.random.default_rng(1000 + i)
-        write_wav(os.path.join(OUT, "move_%d.wav" % (i + 1)),
-                  master(place_clack(rng), rng, peak=0.80, room=0.30))
+    # 落子自 2026-09-27 起改用外部素材 (Resources/sounds/move_1.wav, 经 prep_sfx.py 规范化)。
+    # 默认不再合成, 免得把用户挑好的素材覆盖掉。旧合成变体备份在 tools/archive/sounds_synth_move/。
+    if "--with-move" in sys.argv:
+        print("== 落子 (4 变体, 将覆盖外部素材 move_1.wav) ==")
+        for i in range(4):
+            rng = np.random.default_rng(1000 + i)
+            write_wav(os.path.join(OUT, "move_%d.wav" % (i + 1)),
+                      master(place_clack(rng), rng, peak=0.80, room=0.30))
+    else:
+        print("== 落子: 跳过 (当前使用外部素材 move_1.wav; 要重新合成加 --with-move) ==")
 
     print("== 拿起 (2 变体) ==")
     for i in range(2):

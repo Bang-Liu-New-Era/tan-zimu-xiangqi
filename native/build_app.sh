@@ -50,13 +50,13 @@ else
   echo "  (未提供棋子贴图, 将使用程序化棋子)"
 fi
 
-echo "== 复制演员素材 (Resources/actors/<名称>/run_00.png, run_01.png ...) =="
-if [ -d Resources/actors ]; then
-  mkdir -p "$RES/actors"
-  cp -R Resources/actors/. "$RES/actors/" 2>/dev/null || true
-  echo "  已打包演员序列帧 $(find Resources/actors -name '*.png' 2>/dev/null | wc -l | tr -d ' ') 张"
+echo "== 复制 App 图标 (Resources/AppIcon.icns) =="
+# 图标由 tools/make_appicon.py 生成 (人像照片 → 人像模式 → squircle → icns)
+if [ -f Resources/AppIcon.icns ]; then
+  cp Resources/AppIcon.icns "$RES/"
+  echo "  已打包图标 AppIcon.icns"
 else
-  echo "  (未提供演员素材, 马将使用程序化剪影)"
+  echo "  (未提供 AppIcon.icns, 将使用系统默认图标)"
 fi
 
 # 可选: 若上层提供了已编译的 pikafish 二进制(以及权重 pikafish.nnue), 一并打包
@@ -86,6 +86,7 @@ cat > "$CONTENTS/Info.plist" <<PLIST
   <key>CFBundleDisplayName</key> <string>${APP_NAME}</string>
   <key>CFBundleIdentifier</key>  <string>com.example.xiangqi</string>
   <key>CFBundleExecutable</key>  <string>${EXE}</string>
+  <key>CFBundleIconFile</key>    <string>AppIcon</string>
   <key>CFBundlePackageType</key> <string>APPL</string>
   <key>CFBundleInfoDictionaryVersion</key> <string>6.0</string>
   <key>CFBundleShortVersionString</key> <string>2.0</string>

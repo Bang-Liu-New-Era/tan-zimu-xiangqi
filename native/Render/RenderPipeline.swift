@@ -9,7 +9,11 @@
 //  translate, 离开该区段再 restore。于是每个图层只管画自己的东西,
 //  不需要在绘制代码里手写 save/restore, 也不会因为漏写而让天气/大字跟着棋盘抖。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 
 final class RenderPipeline {
     private(set) var layers: [RenderLayer] = []
@@ -34,16 +38,16 @@ final class RenderPipeline {
         for l in layers {
             if l.followsShake != inShakeGroup {
                 if l.followsShake {
-                    NSGraphicsContext.saveGraphicsState()
+                    xqSaveGState()
                     if ctx.shakeX != 0 { ctx.cg?.translateBy(x: ctx.shakeX, y: 0) }
                     inShakeGroup = true
                 } else {
-                    NSGraphicsContext.restoreGraphicsState()
+                    xqRestoreGState()
                     inShakeGroup = false
                 }
             }
             l.draw(ctx)
         }
-        if inShakeGroup { NSGraphicsContext.restoreGraphicsState() }
+        if inShakeGroup { xqRestoreGState() }
     }
 }

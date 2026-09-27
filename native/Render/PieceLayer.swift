@@ -7,7 +7,11 @@
 //    ② 被选中抬起的棋子 + 它在棋盘原位的投影
 //    ③ 走子动画中的棋子 (飞行段 / 落地回弹段)
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 
 /// 棋子层。跟随震屏。
 final class PieceLayer: RenderLayer {
@@ -34,18 +38,18 @@ final class PieceLayer: RenderLayer {
         if s.liftT > 0.001, let ls = s.liftSq, s.liftPiece != 0 {
             let c = ctx.center(ls)
             let lift = s.liftT
-            // 投影: 留在棋盘原位。纯黑 + 45% 不透明度, 由中心向边缘平滑淡出,
-            //       没有描边/没有可察觉的硬边(末端梯度平缓收敛到全透明)
+            // 投影: 留在棋盘原位。纯黑 + 54% 不透明度 (2026-09-25: 由 45% 加深 20%),
+            //       由中心向边缘平滑淡出, 没有描边/没有可察觉的硬边(末端梯度平缓收敛到全透明)
             if let cg = ctx.cg {
                 cg.saveGState()
                 cg.translateBy(x: c.x, y: c.y - cell * 0.055 * lift)
                 cg.scaleBy(x: 1.0, y: 0.94)
-                let a = 0.45 * lift                       // 抬起到位时峰值 45%
-                func sh(_ k: CGFloat) -> CGColor { NSColor(calibratedWhite: 0.0, alpha: a * k).cgColor }
-                // 投影半径 = 棋子的可见半径 (可见直径 0.84 格 × 0.5 × 抬起放大倍数), 让投影占地面积与棋子一致。
+                let a = 0.54 * lift                       // 抬起到位时峰值 54%
+                func sh(_ k: CGFloat) -> CGColor { XColor(crossWhite: 0.0, alpha: a * k).cgColor }
+                // 投影半径 = 棋子可见半径 × √0.80 (2026-09-25: 面积较原来的"与棋同大"缩小 20%)。
                 // 系数 1.02 是补偿渐变末端 alpha 趋 0 造成的"视觉缩小"。
-                let rShadow = cell * 0.42 * (1.0 + 0.10 * lift) * 1.02
-                // 峰值 30% 保持不变, 只把衰减放平缓 —— 让 30% 的灰有更大的可感知面积, 末端平滑收敛到 0(无硬边)
+                let rShadow = cell * 0.42 * 0.894 * (1.0 + 0.10 * lift) * 1.02
+                // 衰减放平缓 —— 让峰值灰度有更大的可感知面积, 末端平滑收敛到 0(无硬边)
                 let stops: [CGFloat] = [0.00, 0.28, 0.52, 0.72, 0.88, 1.00]
                 let decay: [CGFloat] = [1.00, 0.95, 0.83, 0.62, 0.32, 0.00]
                 let cols = decay.map { sh($0) } as CFArray
@@ -91,8 +95,9 @@ final class PieceLayer: RenderLayer {
                                      castShadow: false)
             } else {
                 // ===== 落地段: 压扁 → 轻微过冲回弹 → 稳定 (阻尼振荡) =====
+                // impact 放大初始压扁幅度 —— 重锤砸下时棋子被拍得更扁, 力量感直接可见
                 let v = CGFloat(max(0, min(1, (el - a.fly) / a.land)))
-                let amp = 0.13 * exp(-4.2 * v) * cos(6.2 * v)
+                let amp = 0.13 * a.traj.impact * exp(-4.2 * v) * cos(6.2 * v)
                 PieceRenderer.drawAt(CGPoint(x: tx, y: ty), a.piece, cell,
                                      sx: 1 + amp * 0.65, sy: 1 - amp, castShadow: false)
             }

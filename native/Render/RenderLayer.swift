@@ -8,7 +8,11 @@
 //  改造后: 每种视觉元素是一个 RenderLayer。新增特效 = 新建一个文件实现协议,
 //  再在 BoardView 里加一行注册。BoardView 本体、对局逻辑、菜单都不用动。
 //
+#if canImport(AppKit)
 import AppKit
+#else
+import UIKit
+#endif
 
 // MARK: - 帧快照
 
@@ -56,7 +60,7 @@ struct RenderContext {
 
     var boardW: CGFloat { cell * 8 }
     var boardH: CGFloat { cell * 9 }
-    var cg: CGContext? { NSGraphicsContext.current?.cgContext }
+    var cg: CGContext? { currentCGContext() }
 
     /// 棋盘石板(含边框)在视图里的范围 —— 天气系统用它判断雨滴落点该不该溅水花
     var plateRect: CGRect {

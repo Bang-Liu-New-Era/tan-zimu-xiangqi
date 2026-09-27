@@ -5,10 +5,13 @@
 //  本文件由 native/XiangqiApp.swift 拆分而来 (tools/split_xiangqi.py, P1 纯搬运)。
 //  拆分过程只做位置搬迁, 未改动任何逻辑。
 //
+#if canImport(AppKit)
 import AppKit
+#endif
 import AVFoundation
 import JavaScriptCore
 import CoreText
+#if canImport(AppKit)
 
 class EvalBarView: NSView {
     var eval = 0
@@ -31,3 +34,5 @@ class EvalBarView: NSView {
 }
 
 // MARK: - 教学侧栏
+
+#endif
