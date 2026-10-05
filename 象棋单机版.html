@@ -412,6 +412,7 @@ header h1 { margin: 0; font-size: 26px; letter-spacing: 2px; }
           if (!screen) {
             if (pc === byColor) {
               if (pt === R) return true;
+              // 注意: 第一个子若是炮 → 无炮架不能吃 target, 不 return (它接着当翻山的炮架)
               if (pt === K) {
                 if (dr !== 0) return true;                 // 同一列: 对面将或相邻
                 if (Math.abs(nr - r) + Math.abs(nc - c) === 1) return true; // 横向相邻
@@ -433,9 +434,21 @@ header h1 { margin: 0; font-size: 26px; letter-spacing: 2px; }
       if (!inBoard(ar, ac)) continue;
       const ap = b[idx(ar, ac)];
       if (ap === 0 || colorOf(ap) !== byColor || typeOf(ap) !== H) continue;
-      const lr = ar + (Math.abs(dr) === 2 ? dr / 2 : 0);
-      const lc = ac + (Math.abs(dc) === 2 ? dc / 2 : 0);
+      // 蹩马腿: [dr,dc] 是"目标→马"的偏移, 马吃目标的走子向量是 (-dr,-dc),
+      // 腿 = 马位置沿直线分量(绝对值 2 的轴)向目标半步 → ar - dr/2 (切勿写成 +)
+      const lr = ar - (Math.abs(dr) === 2 ? dr / 2 : 0);
+      const lc = ac - (Math.abs(dc) === 2 ? dc / 2 : 0);
       if (b[idx(lr, lc)] === 0) return true;
+    }
+    // 象/相 (走田字, 塞象眼; 不过河 → target 须在攻击方半场)
+    const ele = [[-2, -2], [-2, 2], [2, -2], [2, 2]];
+    for (const [dr, dc] of ele) {
+      const ar = r + dr, ac = c + dc;
+      if (!inBoard(ar, ac)) continue;
+      const ap = b[idx(ar, ac)];
+      if (ap === 0 || colorOf(ap) !== byColor || typeOf(ap) !== E) continue;
+      if (!inElephantHalf(byColor, r)) continue;
+      if (b[idx(ar - dr / 2, ac - dc / 2)] === 0) return true; // 象眼方向与马腿同理: 向 target 半步
     }
     // 兵/卒
     const pawnSrc = [];

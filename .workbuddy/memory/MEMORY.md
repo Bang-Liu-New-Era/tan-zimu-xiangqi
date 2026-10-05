@@ -89,6 +89,16 @@
 - 菜单「特技」控制特效，选择存 UserDefaults(`xq.fxShape/fxEase/fxCrack`)，启动 `applyFX()` 恢复。
 - **已删除（2026-09-25 用户要求）**：下雨/天气 `FX/WeatherLayer.swift`、马跑过 `FX/ActorLayer.swift` + `Resources/actors/`、菜单天气与马、`fxWeather`。别按旧文档找这些文件。
 
+## 走棋引擎（约定）
+- 规则引擎 = `engine/xiangqi.js`（ai.js/coach.js 复用它），走子生成 `generateLegalMoves`、攻击判定 `isAttacked`。
+- **2026-10-05 修复两个 bug 并与权威 xqwlight 对拍到完全一致**（perft 44/1920/79666 + depth-2 divide 44 根着法全同）：
+  ① `isAttacked` 马腿方向（腿 = `ar - dr/2`，[dr,dc] 是目标→马偏移，别写 +）；② 补了象的攻击检测（田字+象眼+不过河）。
+  炮**无炮架不能吃**——直线扫描第一个子是炮时不 return（当炮架）。
+- isAttacked 在「target 是空格/攻击方己子」上会多报，但将军判定 target 恒为王格，不受影响；对拍须排除这些格。
+- **引擎有多处副本，改引擎必须全同步**：`engine/*.js`（源头）、`native/Resources/*.js`（死副本）、
+  `象棋单机版.html` 内嵌 `<script id="libs-xq">`/`libs-ai` 段。build_app.sh 与 iOS 工程都直接引用 engine/ 原目录 ✓。
+- perft 基准（权威 xqwlight 实测）：44 / 1920 / 79666。对拍脚本在 /tmp/test_horse_leg.js 等（会话级，丢了可按日志重建）。
+
 ## iOS 移植（约定）
 - 目录：源码 `native/ios/src/`（AppIOS / BoardViewIOS / CoachPanelIOS / GameViewController / Diag）；真机工程 `native/ios/XiangqiIOS.xcodeproj`（手写 pbxproj，objectVersion 77）；说明 `native/ios/README_真机安装.md`；模拟器一键 `cd native && bash ios/build_ios_sim.sh`。
 - **工程结构铁律**：源码用**同步组**（`src`、`../Core|Render|FX|Audio|Support|UI`，改一份双端生效）；**资源必须用经典蓝色文件夹引用**（`../Resources/sounds|pieces|boards` + `../../engine/*.js`）——同步组的子目录是"组"，资源会被**平铺拷到包根**。
